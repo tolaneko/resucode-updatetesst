@@ -7,7 +7,7 @@ from telegram import Update
 from keep_alive import keep_alive
 keep_alive()
 
-BOT_TOKEN = "7423511373:AAFs88vkgehUWG7q_NdNl_DxHZPwJxponDA"
+BOT_TOKEN = "7928363584:AAEjvTYVe5BxLu_NSGV_5tPP5zFVVlo2tMg"
 ADMIN_IDS = [7761915412, 6768452438]
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -240,11 +240,8 @@ def send_welcome(message):
 
 # ======== lệnh /id =========
 @bot.message_handler(commands=['id'])
-def handle_id(message):
-    user_id = message.from_user.id
-    turns = user_turns.get(user_id, 0)
-    bot.reply_to(message, f"🆔️ ID của bạn là: {user_id}\n🎫 Lượt còn lại: {turns}")
-    
+def handler_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(f"🆔️ID của bạn là: `{update.effective_user.id}`\n🎫 Lượt còn lại của bạn: {turns}", parse_mode="Markdown")
 
 # ======== lệnh /tx =========
 @bot.message_handler(commands=['tx'])
@@ -510,6 +507,36 @@ def send_message(message):
     bot.send_message(uid, f"✉️ Phản hồi từ admin\n👾 Tiêu đề: {title}\n✒️Nội Dung: {content}\n\n🕒 Time: {now}")
     bot.reply_to(message, f"📥 Đã phản hồi report đến người dùng {uid}\n👾 Tiêu đề: {title}\n✉️ Nội dung: {content}\n\n🕒 Time: {now}")
 
+# ======== Lệnh /listuser =========
+@bot.message_handler(commands=['listuser'])
+async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not ADMIN_IDS(update.effective_user.id):
+        return await update.message.reply_text("❌ Bạn không có quyền dùng lệnh này.")
+
+    if not USERS:
+        return await update.message.reply_text("Danh sách trống.")
+    msg = "\n".join([f"{uid} ➤ {tun}" for uid, exp in USERS.items()])
+    await update.message.reply_text(f"📋 Danh sách user:\n{msg}")
+
+# ======== Lệnh /broadcast =========
+@bot.message_handler(commands=['broadcast])
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not ADMIN_IDS(update.effective_user.id):
+        return await update.message.reply_text("❌ Bạn không có quyền dùng lệnh này.")
+
+    msg = " ".join(context.args)
+    if not msg:
+        return await update.message.reply_text("Cú pháp: /broadcast <nội dung>")
+
+    count = 0
+    for uid in USERS:
+        try:
+            await context.bot.send_message(chat_id=uid, text=f"📢 Thông báo từ Admin:\n{msg}")
+            count += 1
+        except:
+            continue
+    await update.message.reply_text(f"✅ Đã gửi thông báo đến {count} người dùng.")
+    
 # ======== Lệnh /support =========
 @bot.message_handler(commands=['support'])
 def handle_support(message):
