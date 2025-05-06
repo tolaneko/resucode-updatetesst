@@ -1,9 +1,13 @@
 import telebot
+import logging
 import random
+import hashlib
+import math
 import string
 import json
 from datetime import datetime, timedelta
 from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from keep_alive import keep_alive
 keep_alive()
 
