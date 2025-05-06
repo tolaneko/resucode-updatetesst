@@ -519,7 +519,7 @@ async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"📋 Danh sách user:\n{msg}")
 
 # ======== Lệnh /broadcast =========
-@bot.message_handler(commands=['broadcast])
+@bot.message_handler(commands=['broadcast'])
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not ADMIN_IDS(update.effective_user.id):
         return await update.message.reply_text("❌ Bạn không có quyền dùng lệnh này.")
