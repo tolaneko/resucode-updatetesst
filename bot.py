@@ -243,8 +243,6 @@ def send_welcome(message):
                           f"🕒 Time: {now}")
 
 # ======== lệnh /id =========
-async def id_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"ID của bạn là: `{update.effective_user.id}`", parse_mode="Markdown")
 
 # ======== lệnh /tx =========
 @bot.message_handler(commands=['tx'])
@@ -544,8 +542,5 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @bot.message_handler(commands=['support'])
 def handle_support(message):
     bot.reply_to(message, "📩 Nếu bạn cần hỗ trợ, vui lòng liên hệ đến livechat tại [đang cập nhật livechat]\n📩 Nếu bạn có thắc mắc về bot vui lòng liên hệ với quản trị viên bot tại: @hoanglong3703\n\n👾 Note: chúng tôi chuẩn bị cập nhật trang hỗ trợ thành live chat")
-
-
-app.add_handler(CommandHandler("id", id_command))
 
 bot.polling()
