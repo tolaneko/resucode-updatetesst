@@ -241,7 +241,7 @@ def send_welcome(message):
 # ======== lệnh /id =========
 @bot.message_handler(commands=['id'])
 def handler_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"🆔️ID của bạn là: `{update.effective_user.id}`\n🎫 Lượt còn lại của bạn: {turns}", parse_mode="Markdown")
+    await update.message.reply_text(f"🆔️ID của bạn là: `{update.effective_user.id}`", parse_mode="Markdown")
 
 # ======== lệnh /tx =========
 @bot.message_handler(commands=['tx'])
