@@ -509,34 +509,35 @@ def send_message(message):
     bot.reply_to(message, f"📥 Đã phản hồi report đến người dùng {uid}\n👾 Tiêu đề: {title}\n✉️ Nội dung: {content}\n\n🕒 Time: {now}")
 
 # ======== Lệnh /listuser =========
-@bot.message_handler(commands=['listuser'])
-async def list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not ADMIN_IDS(update.effective_user.id):
-        return await update.message.reply_text("❌ Bạn không có quyền dùng lệnh này.")
-
-    if not USERS:
-        return await update.message.reply_text("Danh sách trống.")
-    msg = "\n".join([f"{uid} ➤ {tun}" for uid, exp in USERS.items()])
-    await update.message.reply_text(f"📋 Danh sách user:\n{msg}")
+@bot.message_handler(commands=['listusers'])
+def list_users_admin(message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    users = load_users()
+    if not users:
+        return bot.reply_to(message, escape_md("📭 Không có người dùng nào được kích hoạt."))
+    reply = "📋 Danh sách người dùng:\n"
+    for uid, info in users.items():
+        reply += f"🆔 {uid} – Lượt dùng còn lại: {info['tun']}\n"
+    bot.reply_to(message, escape_md(reply))
 
 # ======== Lệnh /broadcast =========
 @bot.message_handler(commands=['broadcast'])
-async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not ADMIN_IDS(update.effective_user.id):
-        return await update.message.reply_text("❌ Bạn không có quyền dùng lệnh này.")
-
-    msg = " ".join(context.args)
-    if not msg:
-        return await update.message.reply_text("Cú pháp: /broadcast <nội dung>")
-
+def broadcast_message(message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    text = message.text.replace("/broadcast", "").strip()
+    if not text:
+        return bot.reply_to(message, escape_md("⚠️ Dùng: /broadcast <nội dung>"))
+    users = load_users()
     count = 0
-    for uid in USERS:
+    for uid in users:
         try:
-            await context.bot.send_message(chat_id=uid, text=f"📢 Thông báo từ Admin:\n{msg}")
+            bot.send_message(uid, escape_md(f"📢 Thông báo:\n{text}"), parse_mode="MarkdownV2")
             count += 1
         except:
             continue
-    await update.message.reply_text(f"✅ Đã gửi thông báo đến {count} người dùng.")
+    bot.reply_to(message, escape_md(f"✅ Đã gửi thông báo đến {count} người dùng."))
     
 # ======== Lệnh /support =========
 @bot.message_handler(commands=['support'])
