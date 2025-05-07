@@ -511,7 +511,7 @@ def send_message(message):
 # ======== Lệnh /listuser =========
 @bot.message_handler(commands=['listusers'])
 def list_users_admin(message):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id != ADMIN_IDS:
         return
     users = load_users()
     if not users:
@@ -524,7 +524,7 @@ def list_users_admin(message):
 # ======== Lệnh /broadcast =========
 @bot.message_handler(commands=['broadcast'])
 def broadcast_message(message):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id != ADMIN_IDS:
         return
     text = message.text.replace("/broadcast", "").strip()
     if not text:
